@@ -1,0 +1,18 @@
+﻿@model FilipBlog.Models.AddUserToRole
+@{
+    ViewBag.Title = "AddUserToRoleModel";
+}
+
+<h2>Add User To Role</h2>
+
+@using (Html.BeginForm("AddUserToRole", "Account")) {
+    <div class="form-group">
+        <label><b>Email</b></label>
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.Role, new SelectList(Model.Roles), new { @class = "form-control" })
+    </div>
+    <button class="btn btn-success" type="submit">Save</button>
+}

@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNet.Identity
+@model FilipBlog.Models.AddUserToRoleById
+
+@{
+    ViewBag.Title = "AddUserToRoleById";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Add User To Role</h2>
+
+@using (Html.BeginForm("AddUserToRoleById", "Account")) {
+
+    @Html.HiddenFor(m => m.UserId, new { Value = User.Identity.GetUserId() })
+
+    <div class="form-group">
+        @Html.DropDownListFor(m => m.Role, new SelectList(Model.Roles), new { @class = "form-control" })
+    </div>
+    <button class="btn btn-success" type="submit">Save</button>
+}

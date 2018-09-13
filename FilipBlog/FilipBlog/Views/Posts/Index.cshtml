@@ -1,0 +1,71 @@
+﻿@model IEnumerable<FilipBlog.Models.Post>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Author.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Subtitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateOfCreation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateOfModification)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsFlagged)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Author.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Subtitle)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Content)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateOfCreation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateOfModification)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsFlagged)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.PostId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.PostId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.PostId }) |
+            @Html.ActionLink("Report", "Create", "Reports", new { postId = item.PostId }, null)
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,101 @@
+﻿@using Microsoft.AspNet.Identity
+@model FilipBlog.Models.RawPost
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Create</h2>
+<h4>Msg: @ViewBag.Message</h4>
+<h4>User.id: @User.Identity.GetUserId()</h4>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>Post</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Subtitle, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Subtitle, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Subtitle, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.RawImageURLs, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.RawImageURLs, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    @Html.HiddenFor(model => model.AuthorRefId, new { Value = User.Identity.GetUserId() })
+    @Html.HiddenFor(model => model.DateOfCreation)
+    @Html.HiddenFor(model => model.DateOfModification)
+    @Html.HiddenFor(model => model.IsFlagged, new { Value = false })
+    @*<div class="form-group">
+            @Html.LabelFor(model => model.IsFlagged, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.IsFlagged)
+                    @Html.ValidationMessageFor(model => model.IsFlagged, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>*@
+
+   
+    @for (int i = 0; i < Model.RawCategories.Length; i++)
+    {
+        
+    <div class="form-group">
+        @Html.DisplayFor(model => Model.RawCategories[i].CategoryName)
+        @Html.HiddenFor(model => Model.RawCategories[i].CategoryName)
+        <div class="col-md-6">
+            <div class="checkbox">
+                @Html.EditorFor(model => Model.RawCategories[i].IsSelected)
+                @Html.ValidationMessageFor(model => Model.RawCategories[i].IsSelected, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+   
+
+    }
+
+
+
+
+
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

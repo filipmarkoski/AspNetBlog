@@ -1,0 +1,10 @@
+﻿@model FilipBlog.Models.CategoryIntermediate
+    ViewBag.Title = "CategoryEditorView";
+}
+
+<h2>CategoryEditorView</h2>
+
+
+@Html.LabelFor(model => model.IsSelected, Model.CategoryName)
+@Html.EditorFor(model => model.IsSelected)
+@Html.HiddenFor(model => model.CategoryName)
