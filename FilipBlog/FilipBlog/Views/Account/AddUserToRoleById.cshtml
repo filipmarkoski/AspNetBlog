@@ -10,7 +10,7 @@
 
 @using (Html.BeginForm("AddUserToRoleById", "Account")) {
 
-    @Html.HiddenFor(m => m.UserId, new { Value = User.Identity.GetUserId() })
+    @Html.HiddenFor(m => m.UserId)
 
     <div class="form-group">
         @Html.DropDownListFor(m => m.Role, new SelectList(Model.Roles), new { @class = "form-control" })

@@ -11,7 +11,8 @@ namespace FilipBlog.Models {
         public List<string> Roles { get; set; }
 
         public AddUserToRoleById() {
-            this.Roles = new List<string>();
-        }
+			this.Roles = new List<string>() { "Admin", "Editor", "Moderator", "User","Banned" };
+			
+		}
     }
 }
