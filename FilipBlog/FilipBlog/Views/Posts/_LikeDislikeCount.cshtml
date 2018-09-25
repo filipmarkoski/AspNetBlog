@@ -1,0 +1,152 @@
+﻿@using FilipBlog.Models;
+@model FilipBlog.Models.Post
+
+
+<div class="">
+	@{ 
+		var likeModalId = String.Format("likersList{0}", Model.PostId);
+		var disLikeModalId = String.Format("disLikersList{0}", Model.PostId);
+		var commentModalId = String.Format("commentsList{0}", Model.PostId);
+	}
+	<!-- Button to Open the Modal -->
+	<span class="btn" type="button" data-toggle="modal" data-target="#@likeModalId")>
+		<button class="btn btn-xs btn-danger">
+			<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+		</button>
+		@Html.DisplayFor(item => Model.Likers.Count)
+	</span>
+
+	<!-- The Modal -->
+	<div class="modal" id="@likeModalId">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">People who like this post</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<ul>
+						@foreach (var person in @Model.Likers)
+						{
+							<li>
+								@Html.ActionLink(person.FullName(), "Details", "ApplicationUsers", new { id = person.Id }, null)
+
+							</li>
+
+						}
+					</ul>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Button to Open the Modal -->
+	<span class="btn" type="button" data-toggle="modal" data-target="#@disLikeModalId" style="margin-left: -15px;">
+
+		<button class="btn btn-xs purpleButton"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span></button>
+		@Html.DisplayFor(item => Model.Dislikers.Count)
+	</span>
+
+	<!-- The Modal -->
+	<div class="modal" id="@disLikeModalId">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">People who dislike this post</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<ul>
+						@foreach (var person in @Model.Dislikers)
+						{
+							<li>
+								@Html.ActionLink(person.FullName(), "Details", "ApplicationUsers", new { id = person.Id }, null)
+
+							</li>
+
+						}
+					</ul>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<!-- Button to Open the Modal -->
+	<span class="btn" type="button" data-toggle="modal" data-target="#@commentModalId" style="margin-left: -15px;">
+		<button class="btn btn-xs btn-warning">	<span class="glyphicon glyphicon-comment"></span></button>
+		@Html.DisplayFor(item => Model.Comments.Count)
+	</span>
+
+	<!-- The Modal -->
+	<div class="modal" id="@commentModalId">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">People who commented on this post</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<!-- Modal body -->
+				<div class="modal-body">
+					<ul>
+						@foreach (var commenter in Model.Comments.Select(c => c.Commenter).Distinct())
+						{
+							<li>
+								@Html.ActionLink(commenter.FullName(), "Details", "ApplicationUsers", new { id = commenter.Id }, null)
+
+							</li>
+
+						}
+					</ul>
+				</div>
+
+				<!-- Modal footer -->
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal">Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	@{
+		var percent = 50;
+		if (Model.Likers.Count + Model.Dislikers.Count != 0)
+		{
+			percent = Model.Likers.Count * 100 / (Model.Likers.Count + Model.Dislikers.Count);
+		}
+
+		<div class="progress" style="width:200px; height: 5px; margin-bottom: 15px;">
+			<div class="progress-bar" role="progressbar" style="width: @percent%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+		</div>
+	}
+
+	
+</div>
+
+

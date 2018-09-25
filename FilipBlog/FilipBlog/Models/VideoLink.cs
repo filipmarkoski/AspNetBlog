@@ -17,5 +17,14 @@ namespace FilipBlog.Models {
         public override string ToString() {
             return this.URL;
         }
-    }
+
+		public string YoutubeId()
+		{
+			if (URL.Contains("watch"))
+			{
+				return URL.Split('=').Last();
+			}
+			return URL.Split('/').Last();
+		}
+	}
 }

@@ -24,8 +24,10 @@ namespace FilipBlog.Controllers
 
 		public AccountController()
 		{
+			//return RedirectToAction("Index", "Account");
 		}
 
+		[Authorize(Roles="Admin, Moderator")]
 		public ActionResult Index()
 		{
 			var users = db.Users;
@@ -94,20 +96,8 @@ namespace FilipBlog.Controllers
 			return RedirectToAction("Index", "Posts");
 		}
 
-		public ActionResult AddUserToRole()
-		{
-			AddUserToRole model = new AddUserToRole();
-
-			return View(model);
-		}
-
-		[HttpPost]
-		public ActionResult AddUserToRole(AddUserToRole model)
-		{
-			var user = UserManager.FindByName(model.UserName);
-			UserManager.AddToRole(user.Id, model.Role);
-			return RedirectToAction("Index", "Posts");
-		}
+		
+	
 
 		public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
 		{
@@ -163,7 +153,8 @@ namespace FilipBlog.Controllers
 			switch (result)
 			{
 				case SignInStatus.Success:
-					return RedirectToLocal(returnUrl);
+					//return RedirectToLocal(returnUrl);
+					return RedirectToAction("HomeView", "Categories");
 				case SignInStatus.LockedOut:
 					return View("Lockout");
 				case SignInStatus.RequiresVerification:
@@ -265,7 +256,8 @@ namespace FilipBlog.Controllers
 					};
 
 					AddUserToRoleById(addUserToRoleById);
-					return RedirectToAction("Index", "Home");
+					//return RedirectToAction("Index", "Home");
+					return RedirectToAction("HomeView", "Categories");
 				}
 				AddErrors(result);
 			}

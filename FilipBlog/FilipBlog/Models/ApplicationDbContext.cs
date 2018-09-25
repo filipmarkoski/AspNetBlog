@@ -19,9 +19,6 @@ namespace FilipBlog.Models {
         public DbSet<ImageLink> ImageLinks { get; set; }
         public DbSet<VideoLink> VideoLinks { get; set; }
 
-        // IdentityDbContext already has this inside of it
-        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false) {
         }

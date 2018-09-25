@@ -1,0 +1,148 @@
+﻿@model FilipBlog.Models.Comment
+@using Microsoft.AspNet.Identity;
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+
+
+<link rel="stylesheet" type="text/css" href="~/Content/BlogStyle.css">
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //var table = $("#moviesTable").DataTable();
+        $("td .js-delete").on("click", function () {
+
+            var button = $(this);
+            $.ajax({
+                url: "/api/CommentsApi/" + button.attr("data-comment-id"),
+                method: "DELETE",
+                success: function () {
+                   
+                    button.closest("tr").remove();
+                }
+            });
+
+        });
+
+
+
+        $("td .js-edit").on("click", function () {
+
+            var button = $(this);
+            $("." + button.attr("data-comment-id") + ".editField").show();
+            $("." + button.attr("data-comment-id") + ".currentContent").hide();
+            $("." + button.attr("data-comment-id") + ".js-save").show();
+            $("." + button.attr("data-comment-id") + ".js-cancel").show();
+            $("." + button.attr("data-comment-id") + ".js-edit").hide();
+        });
+
+
+        $("td .js-cancel").on("click", function () {
+            var button = $(this);
+            $("." + button.attr("data-comment-id") + ".js-save").hide();
+            $("." + button.attr("data-comment-id") + ".js-cancel").hide();
+            $("." + button.attr("data-comment-id") + ".js-edit").show();
+            $('.' + button.attr("data-comment-id") + ".editField").val($('.' + button.attr("data-comment-id") + ".currentContent").text());
+            $('.' + button.attr("data-comment-id") + ".currentContent").show();
+            $('.' + button.attr("data-comment-id") + ".editField").hide();
+        });
+        $("td .js-save").on("click", function () {
+
+            var button = $(this);
+            var currentContent = $('.' + button.attr("data-comment-id") + ".currentContent");
+            var editField = $('.' + button.attr("data-comment-id") + ".editField");
+            currentContent.text(editField.val());
+            editField.hide();
+            $("." + button.attr("data-comment-id") + ".js-save").hide();
+            $("." + button.attr("data-comment-id") + ".js-cancel").hide();
+            $("." + button.attr("data-comment-id") + ".js-edit").show();
+
+
+            currentContent.show();
+
+            var newComment = {
+                Content: currentContent.text(),
+            };
+
+
+            $.ajax({
+                url: '/api/CommentsApi/' + button.attr("data-comment-id"),
+                type: 'PUT',
+                dataType: "json",
+                data: JSON.stringify({
+
+                    Content: currentContent.text(),
+                }),
+                contentType: 'application/json; charset=utf-8',
+
+                success: function (data) {
+                    // refreshComments();
+                },
+            });
+        });
+    });
+
+
+
+
+    $("td .js-reply").on("click", function () {
+
+        $(".repliesContainer." + $(this).attr("data-comment-id")).toggle();
+
+    });
+
+
+
+
+
+
+
+</script>
+
+<table class="table tableRoundedCorners">
+
+    @foreach (var item in Model.Replies)
+    {
+        <tr>
+
+            <td style="width:30%">
+                <img src=@item.Commenter.ProfilePictureURL class="commenterProfilePhoto img-circle">
+
+                @Html.ActionLink(item.Commenter.FullName(), "Details", "Accounts", new { id = item.CommentId })
+            </td>
+
+            <td >
+                <div>
+
+
+                    <p class="currentContent @item.CommentId" style="font-size: 18px">@item.Content</p>
+                    <input type="text" hidden="hidden" class="editField @item.CommentId" value=@item.Content>
+                </div>
+                <div>
+                    @item.howLongAgo()
+                    @if (item.Commenter.Id == User.Identity.GetUserId())
+    {<button data-comment-id=@item.CommentId class="btn-link js-edit @item.CommentId">Edit</button>
+                <button data-comment-id=@item.CommentId class="btn-link js-cancel @item.CommentId" hidden="hidden">Cancel</button>
+                <button data-comment-id=@item.CommentId class="btn-link js-save @item.CommentId" hidden="hidden">Save</button>
+}
+                    @if (item.Commenter.Id == User.Identity.GetUserId() || User.IsInRole("Admin"))
+    {
+                <button data-comment-id=@item.CommentId class="btn-link js-delete @item.CommentId">Delete</button>
+}
+                @* <button data-comment-id=@item.CommentId class="btn-link js-reply @item.CommentId"
+            data-url='@Url.Action("Reply","Comments", new {ParentComment_CommentId  = item.CommentId} )'>
+        Reply
+    </button>*@
+                </div>
+
+            </td>
+
+        </tr>
+
+        @* @Html.Partial("~/Views/Comments/_SingleComment.cshtml", item); *@
+    }
+
+</table>
+
+
+

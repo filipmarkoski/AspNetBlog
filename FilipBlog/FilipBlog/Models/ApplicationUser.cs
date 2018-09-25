@@ -12,8 +12,11 @@ namespace FilipBlog.Models {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser {
 
-        [Required] public string FirstName { get; set; }
-        [Required] public string LastName { get; set; }
+        [Required]
+		[DisplayName("First Name")]
+		public string FirstName { get; set; }
+		[DisplayName("Last Name")]
+		[Required] public string LastName { get; set; }
         [Required]
         [DisplayName("Date of Birth")]
         [DataType(DataType.Date), DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -27,6 +30,12 @@ namespace FilipBlog.Models {
         public virtual ICollection<Post> PostsCommentedOn { get; set; }
         public virtual ICollection<Post> PostsReported { get; set; }
         public virtual ICollection<Comment> CommentsCommentedOn { get; set; }
+
+        public String FullName ()
+        {
+            return String.Format("{0} {1}", FirstName, LastName);
+        }
+
 
         public ApplicationUser() {
             this.PostsAuthored = new List<Post>();

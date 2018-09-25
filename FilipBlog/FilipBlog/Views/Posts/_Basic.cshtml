@@ -1,0 +1,14 @@
+﻿@model FilipBlog.Models.Post
+
+<div class="row">
+	<div class="col-md-4">
+		<img class="img-thumbnail" src=@Model.ImageURLs.FirstOrDefault()>
+	
+	</div>
+	<div class="col-md-8">
+		<h3>  @Html.ActionLink(Model.Title, "Details", "Posts", new { id = Model.PostId }, null)</h3>
+
+		@Model.Subtitle
+	</div>
+
+</div>

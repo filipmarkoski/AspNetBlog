@@ -12,12 +12,14 @@ namespace FilipBlog.Models {
 
         [Key] public int CategoryID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="Category name can't be empty")]
         [StringLength(50)]
         public string Name { get; set; }
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfModification { get; set; }
+		[Display(Name = "Date Created")]
+		public DateTime DateOfCreation { get; set; }
+		[Display(Name = "Date Modified")]
+		public DateTime DateOfModification { get; set; }
 
-        public virtual ICollection<Post> Posts { get; set; }
+		public virtual ICollection<Post> Posts { get; set; }
     }
 }

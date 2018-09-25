@@ -9,5 +9,17 @@ namespace FilipBlog.Models
     {
         public String CategoryName { get; set; }
         public Boolean IsSelected { get; set; }
+        public CategoryIntermediate()
+        {
+                
+        }
+        public CategoryIntermediate(String CategoryName, Boolean IsSelected)
+        {
+            this.CategoryName = CategoryName;
+            this.IsSelected = IsSelected;
+
+        }
+
+       
     }
 }

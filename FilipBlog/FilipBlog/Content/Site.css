@@ -1,24 +1,146 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+	padding-top: 50px;
+	padding-bottom: 20px;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
 .dl-horizontal dt {
-    white-space: normal;
+	white-space: normal;
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
 textarea {
-    max-width: 280px;
+	max-width: 280px;
+}
+
+/* main.css (our code) */
+
+* {
+	margin: 0;
+	padding: 0;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+/*Colors*/
+:root {
+	--black-color: #222;
+	--bg-color: #F2EEFF; /*white smoke*/
+	--bg-border-color: Gainsboro;
+	--inside-color: white;
+	--highlight-color: #7646FF /*#00e600*/;
+	--base-highlight-color: #00b300;
+	/* Gina's */
+	--main-purple-color: /*#772eb2*/ #7646FF;
+	--main-font: Calibri;
+	--main-white-color: white;
+	--main-grey-color: #222;
+	--main-red-color: #d9534f;
+}
+
+body {
+	background-color: var(--bg-color);
+	/*margin: 0 !important;
+	padding: 0 !important;*/
+}
+
+hr {
+	margin: 0 !important;
+}
+/*.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+}*/
+
+.post-brick-controls {
+	float: right;
+	margin-right: -20px;
+	margin-top: -5px;
+}
+
+.post-brick {
+	height: 215px;
+	background-color: var(--inside-color);
+	padding: 15px;
+	margin: 25px;
+	margin-left: 0;
+	border-left: 5px solid var(--highlight-color);
+	border-radius: 5px;
+}
+
+.post-brick-img {
+	max-height: 150px;
+}
+
+post-title {
+}
+
+.float-right {
+	float: right;
+}
+
+
+.top-post-title {
+	color: var(--highlight-color)
+}
+
+.top-post-container {
+	position: fixed;
+	margin-top: 5px;
+	margin-left: 115vh;
+}
+
+.top-post-list {
+	background-color: var(--inside-color);
+	padding: 15px;
+	padding-top: 5px;
+	padding-bottom: 0;
+	padding-left: 25px;
+	border-left: 5px solid var(--main-red-color);
+	border-radius: 5px;
+	margin-bottom: 25px;
+}
+
+
+.top-post-list-element {
+}
+
+.small-text {
+	font-size: 8px;
+}
+
+.red-text {
+	color: var(--main-red-color) !important;
+}
+
+.purple-text  {
+	color: var(--main-purple-color) !important;
+}
+
+a {
+	color: var(--main-red-color);
+}
+
+.white-text {
+	color: var(--main-white-color);
 }

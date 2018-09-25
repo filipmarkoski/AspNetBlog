@@ -1,0 +1,11 @@
+﻿
+@using FilipBlog.Models
+@model List<FilipBlog.Models.ApplicationUser>
+<ol>
+    @foreach (ApplicationUser user in Model)
+    {
+        <li class="top-post-list-element">@Html.Partial("~/Views/Shared/_TopAuthorBasic.cshtml", user)</li>
+    }
+</ol>
+
+

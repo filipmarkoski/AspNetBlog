@@ -1,0 +1,16 @@
+﻿@model FilipBlog.Models.ApplicationUser
+
+
+
+
+
+<div>
+	<img class="img-responsive" style="height: 25px; width: 25px; display: inline" src="@Model.ProfilePictureURL" alt="Alternate Text" />
+	<span style="font-size: 10px;" class="red-text">
+		@Html.ActionLink(Model.FullName(), "Details", new { id = Model.Id })
+	</span>
+
+
+
+</div>
+

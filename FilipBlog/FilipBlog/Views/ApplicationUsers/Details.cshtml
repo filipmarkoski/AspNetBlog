@@ -1,0 +1,150 @@
+﻿@model FilipBlog.Models.ApplicationUser
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Details";
+}
+@section scripts{
+<script>
+	$(document).ready(function () {
+
+		$(".deletePost").on("click", function () {
+
+			var button = $(this);
+			$.ajax({
+				url: "/api/PostsApi/" + button.attr("data-Post-Id"),
+				method: "DELETE",
+				success: function () {
+					button.closest("div").remove();
+				},
+				error: function () {
+				//	button.closest("div").remove();
+				}
+			});
+
+		});
+
+	});
+</script>
+}
+
+<div class="row">
+	<div class=" purpleBackground whiteText profileSidebar">
+
+		<h3> @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)</h3>
+		<img src=@Model.ProfilePictureURL class="profilePic img-circle img-responsive">
+        <div style="font-size: 18px" class="white-text">
+            <div style="padding-top: 20px" >
+                <a href="#about">About</a>
+            </div>
+            <div>
+                <a href="#posts">Posts</a>
+            </div>
+            <div>
+                <a href="#likes">Likes</a>
+            </div>
+            <div>
+                <a href="#comments">Comments</a>
+            </div>
+            @if (User.IsInRole("Admin") || User.IsInRole("Editor") || User.IsInRole("Moderator") || User.Identity.GetUserId().Equals(Model.Id))
+            { <div>
+                <a href="#reports">Reports</a>
+            </div>}
+        </div>
+	</div>
+    <div class="profileMain whiteBackground paddingDiv">
+        <div id="about">
+            <h2 class="redText">About:</h2>
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.BirthDay)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BirthDay)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Biography)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Biography)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Email)
+                </dd>
+
+
+                @*<dt>
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PhoneNumber)
+                </dd>*@
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.UserName)
+                </dd>
+
+            </dl>
+        </div>
+
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+        <hr />
+        <div id="posts">
+            <h2 class="redText">Posts:</h2>
+            @foreach (var post in Model.PostsAuthored)
+        {
+            @Html.Partial("~/Views/Posts/_Basic.cshtml", post)
+
+
+    }
+
+        </div>
+        <hr />
+        <div id="likes">
+            <h2 class="redText">Likes:</h2>
+            @foreach (var post in Model.PostsLiked)
+        {
+            @Html.Partial("~/Views/Posts/_Basic.cshtml", post)
+
+
+    }
+
+        </div>
+        <hr />
+        <div id="comments">
+            <h2 class="redText">Comments:</h2>
+            @foreach (var post in Model.PostsCommentedOn)
+        {
+            @Html.Partial("~/Views/Posts/_Basic.cshtml", post)
+
+
+    }
+
+        </div>
+        <hr />
+        @if (User.IsInRole("Admin") || User.IsInRole("Editor") || User.IsInRole("Moderator") || User.Identity.GetUserId().Equals(Model.Id))
+        {<div id="reports">
+            <h2 class="redText">Reports:</h2>
+            @foreach (var post in Model.PostsReported)
+            {
+            <div>
+                @Html.Partial("~/Views/Posts/_Basic.cshtml", post)
+                <button class="deletePost" data-Post-Id=@post.PostId> Delete</button>
+            </div>
+
+            }
+
+        </div>}
+    </div>
+
+    </div>
+

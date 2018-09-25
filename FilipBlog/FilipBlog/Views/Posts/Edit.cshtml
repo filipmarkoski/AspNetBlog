@@ -1,71 +1,117 @@
-﻿@model FilipBlog.Models.Post
+﻿@model FilipBlog.Models.RawPost
 
 @{
-    ViewBag.Title = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Edit";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>Edit</h2>
-
 
 @using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>Post</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.PostId)
-    <div class="form-group">
-        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Subtitle, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Subtitle, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Subtitle, "", new { @class = "text-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-        </div>
-    </div>
-   
-    <div class="form-group">
-        @Html.LabelFor(model => model.DateOfModification, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.DateOfModification, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.DateOfModification, "", new { @class = "text-danger" })
-        </div>
-    </div>
+	@Html.AntiForgeryToken()
 
-    @Html.HiddenFor(model => model.AuthorRefId)
-    @Html.HiddenFor(model => model.DateOfCreation)
-    @Html.HiddenFor(model => model.DateOfModification, new { Value = DateTime.Now })
-    @Html.HiddenFor(model => model.IsFlagged)
+	<div class="form-horizontal">
+		<h3>@Model.Post.Title</h3>
+		<hr />
+		@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+		@Html.HiddenFor(model => model.Post.PostId)
+		<div class="form-group">
+			@Html.LabelFor(model => model.Post.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.Post.Title, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.Post.Title, "", new { @class = "text-danger" })
+			</div>
+		</div>
+		<div class="form-group">
+			@Html.LabelFor(model => model.Post.Subtitle, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.Post.Subtitle, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.Post.Subtitle, "", new { @class = "text-danger" })
+			</div>
+		</div>
+		<div class="form-group">
+			@Html.LabelFor(model => model.Post.Content, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
 
+				@Html.EditorFor(model => model.Post.Content, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.Post.Content, "", new { @class = "text-danger" })
 
+			</div>
+		</div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
-</div>
+		@Html.HiddenFor(model => model.Post.AuthorRefId)
+		@Html.HiddenFor(model => model.Post.DateOfCreation)
+		@Html.HiddenFor(model => model.Post.IsFlagged)
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.RawImageURLs, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.RawImageURLs, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.RawImageURLs, "", new { @class = "text-danger" })
+			</div>
+		</div>
+		<div class="form-group">
+			@Html.LabelFor(model => model.RawVideoURLs, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.RawVideoURLs, new { htmlAttributes = new { @class = "form-control" } })
+				@Html.ValidationMessageFor(model => model.RawVideoURLs, "", new { @class = "text-danger" })
+			</div>
+		</div>
+		<hr />
+		@*<div class="form-group">
+				@Html.LabelFor(model => model.RawImageURLs, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.TextAreaFor(model => model.RawImageURLs, new { htmlAttributes = new { @class = "form-control" } })
+					@Html.ValidationMessageFor(model => model.RawImageURLs, "", new { @class = "text-danger" })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.RawVideoURLs, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.TextAreaFor(model => model.RawVideoURLs, new { htmlAttributes = new { @class = "form-control" } })
+					@Html.ValidationMessageFor(model => model.RawVideoURLs, "", new { @class = "text-danger" })
+				</div>
+			</div>*@
+
+		<div class="form-group">
+			<h4 style="font-weight:700; margin-left: 40px">Select a Category:</h4>
+			@for (int i = 0; i < Model.RawCategories.Length; i++)
+			{
+				<label class="control-label col-md-2">@Html.DisplayFor(model => Model.RawCategories[i].CategoryName)</label>
+				<div class="col-md-10 ">
+					<div class="checkbox" style="margin-left: 30px">
+						@Html.EditorFor(model => Model.RawCategories[i].IsSelected, new { @class = "form-control" })
+					</div>
+
+					@Html.HiddenFor(model => Model.RawCategories[i].CategoryName)
+					@Html.ValidationMessageFor(model => Model.RawCategories[i].IsSelected, "", new { @class = "text-danger" })
+				</div>
+			}
+		</div>
+		@*@for (int i = 0; i < Model.RawCategories.Length; i++)
+			{
+				<div class="form-group">
+					@Html.DisplayFor(model => Model.RawCategories[i].CategoryName)
+					@Html.HiddenFor(model => Model.RawCategories[i].CategoryName)
+					<div class="col-md-6">
+						<div class="checkbox">
+							@Html.EditorFor(model => Model.RawCategories[i].IsSelected)
+							@Html.ValidationMessageFor(model => Model.RawCategories[i].IsSelected, "", new { @class = "text-danger" })
+						</div>
+					</div>
+				</div>
+			}*@
+
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-10">
+				<input type="submit" value="Save" class="btn btn-default" />
+			</div>
+		</div>
+	</div>
 }
-
 <div>
-    @Html.ActionLink("Back to List", "Index")
+	@Html.ActionLink("Back to List", "Index")
 </div>
-
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+	@Scripts.Render("~/bundles/jqueryval")
 }

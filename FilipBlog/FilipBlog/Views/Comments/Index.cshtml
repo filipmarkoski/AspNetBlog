@@ -1,63 +1,75 @@
 ﻿@model IEnumerable<FilipBlog.Models.Comment>
 
 @*@using FilipBlog.Models
-    @model LoginViewModel*@
+	@model LoginViewModel*@
 
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+	@Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Commenter.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Post.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Content)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfCreation)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfModification)
-        </th>
-        <th></th>
-    </tr>
+<table class="table" id="my-table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Commenter.FirstName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Post.Title)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Content)
+			</th>
+			<th>
+				Date Created
+			</th>
+			<th>
+				Date Modified
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
 
-    @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Commenter.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Post.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfCreation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOfModification)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.CommentId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.CommentId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.CommentId })
-            </td>
-        </tr>
-    }
 
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Commenter.FirstName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Post.Title)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Content)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfCreation)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfModification)
+				</td>
+				<td>
+					@Html.ActionLink("Edit", "Edit", new { id = item.CommentId }, new { @class = "btn btn-xs btn-default" })
+					@Html.ActionLink("Details", "Details", new { id = item.CommentId }, new { @class = "btn btn-xs btn-primary" })
+					@Html.ActionLink("Delete", "Delete", new { id = item.CommentId }, new { @class = "btn btn-xs btn-danger" })
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
 
 
+@section scripts{
+	<script>
+		$(document).ready(function () {
+			var table = $("#my-table").DataTable();
+		});
+	</script>
+}

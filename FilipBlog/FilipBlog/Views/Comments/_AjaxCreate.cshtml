@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNet.Identity
+@model FilipBlog.Models.Comment
+
+
+
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@if (User.Identity.IsAuthenticated)
+{
+    <input class="form-control" type="text" id="commentContent" value=""/>
+	<button class="btn btn-primary" style="margin-top: 10px" id="createComment" data-url='@Url.Action("ShowComments","Posts", new {postId = Model.Post_PostId } )'>
+		Comment<span style="margin-left: 10px" class="glyphicon glyphicon-comment"></span>
+	</button>
+
+    @*<button id="createComment" data-url='@Url.Action("ShowComment","Comments")'>Create</button>*@
+
+    @Html.Action("DisplayPhotoAndName", "ApplicationUsers")
+    <input type="text" id="commentPostId" hidden="hidden" value=@Model.Post_PostId />
+}
+	<br />
+<script type="text/javascript">
+    $("#createComment").on("click", function () {
+
+
+        var newComment = {
+            Content: $("#commentContent").val(),
+
+            Post_PostId: $("#commentPostId").val()
+
+        };
+        $.ajax({
+            url: '/api/CommentsApi',
+            type: 'POST',
+            data: JSON.stringify(newComment),
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                refreshComments();
+            },
+            error: function (data) {
+                //alert("POST error");
+                refreshComments();
+            }
+        });
+
+
+    })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section scripts {
+    @Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+}

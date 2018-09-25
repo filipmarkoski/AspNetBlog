@@ -1,71 +1,124 @@
 ﻿@model IEnumerable<FilipBlog.Models.Post>
-
+	@using Microsoft.AspNet.Identity;
 @{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h2>Index</h2>
 
+
+
+
+
 <p>
-    @Html.ActionLink("Create New", "Create")
+	@Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Author.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Subtitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Content)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfCreation)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfModification)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsFlagged)
-        </th>
-        <th></th>
-    </tr>
+<table id="my-table" class="table">
+	<thead>
+		<tr>
+			<th>
+				Author
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Title)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Subtitle)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Content)
+			</th>
+			<th>
+				Date Created
+			</th>
+			<th>
+				Date Modified
+			</th>
+			<th>
+				Flagged
+			</th>
+			<th> </th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.Action("DisplayPhoto", "ApplicationUsers", new { userId = item.AuthorRefId })
+				
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Author.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Subtitle)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Content)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfCreation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfModification)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsFlagged)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.PostId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.PostId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.PostId }) |
-            @Html.ActionLink("Report", "Create", "Reports", new { postId = item.PostId }, null)
-        </td>
-    </tr>
-}
-
+				@Html.ActionLink(item.Author.FullName(), "Details", "ApplicationUsers", new { id = item.AuthorRefId }, null) 
+				</td>
+				<td>
+					@Html.ActionLink(item.Title, "Details", new { id = item.PostId },null)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Subtitle)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Content)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfCreation)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfModification)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.IsFlagged)
+				</td>
+				<td>
+					@Html.ActionLink("Details", "Details", new { id = item.PostId }, new { @class = "btn btn-xs btn-primary" })
+					@if (User.IsInRole("Admin") || (User.IsInRole("Editor") && User.Identity.GetUserId().Equals(item.AuthorRefId) )|| User.IsInRole("Moderator"))
+					{
+						@Html.ActionLink("Edit", "Edit", new { id = item.PostId }, new { @class = "btn btn-xs btn-default" })
+					<button class="btn btn-xs btn-danger js-delete" data-post-id="@item.PostId">Delete</button>
+					}
+					@Html.ActionLink("Report", "Create", "Reports", new { postId = item.PostId }, new { @class = "btn btn-xs btn-warning " })
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
+@section scripts{
+	<script>
+		$(document).ready(function () {
+			var table = $("#my-table").DataTable();
+
+			$("#my-table .js-delete").click(function () {
+
+				var button = $(this);
+				var postId = button.attr("data-post-id");
+
+				var isSure = confirm("Are you sure you want to delete the post with ID = " + postId + "?");
+
+				if (isSure === true) {
+					var url = "/api/PostsApi/" + postId;
+					$.ajax({
+						url: url,
+						method: "DELETE",
+						success: function (response) {
+							console.log(response);
+							//if (response.Message !== undefined) {  // Authorization has failed
+							if (response.hasOwnProperty("Message")) {
+								//document.location = "/Account/Login?ReturnUrl=%2FFriends%2FIndex"
+								//document.location = "/Categories/HomeView"
+							} else {
+								console.log("Post " + postId + " has been deleted.");
+								var parent = button.parents("tr");
+								$(parent).fadeOut("fast", function () {
+									table.row(parent).remove().draw();
+								})
+							}
+						},
+						error: function () {
+							console.log("Error while trying to delete user with ID = " + userId);
+						}
+
+					});
+				}
+			});
+		});
+	</script>
+}

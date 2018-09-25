@@ -17,10 +17,12 @@ namespace FilipBlog.Models {
         [Key] public int ReportId { get; set; }
         [Required] public string Content { get; set; }
 
-        public DateTime DateOfCreation { get; set; }
-        public DateTime DateOfModification { get; set; }
+		[Display(Name = "Date Created")]
+		public DateTime DateOfCreation { get; set; }
+		[Display(Name = "Date Modified")]
+		public DateTime DateOfModification { get; set; }
 
-        [ForeignKey("Reporter")]
+		[ForeignKey("Reporter")]
         public string ReporterRefId { get; set; }
         public virtual ApplicationUser Reporter { get; set; }
 

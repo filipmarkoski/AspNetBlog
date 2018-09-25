@@ -27,11 +27,18 @@ namespace FilipBlog.Controllers
         // GET: Posts/Details/5
         public ActionResult Details(int? id)
         {
+            ViewBag.CommenterRefId = new SelectList(db.Users, "Id", "FirstName");
+            ViewBag.Post_PostId = new SelectList(db.Posts, "PostId", "Title");
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Include(p => p.Comments).Include(p => p.Author).Single(p => p.PostId == id);
+            Post post = db.Posts
+                .Include(p => p.Comments)
+                .Include(p => p.Author)
+                .Single(p => p.PostId == id);
+
 
             if (post == null)
             {
@@ -73,74 +80,27 @@ namespace FilipBlog.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PostId,Title,Subtitle,Content,AuthorRefId,DateOfCreation,DateOfModification,IsFlagged,RawImageURLs,RawCategories")] RawPost rawPost)
+        public ActionResult Create([Bind(Include = "Post,RawImageURLs,RawCategories")] RawPost rawPost)
         {
 
-            Post post = new Post
-            {
-                PostId = rawPost.PostId,
-                Title = rawPost.Title,
-                Subtitle = rawPost.Subtitle,
-                Content = rawPost.Content,
-                AuthorRefId = rawPost.AuthorRefId,
-                DateOfCreation = rawPost.DateOfCreation,
-                DateOfModification = rawPost.DateOfModification,
-                IsFlagged = rawPost.IsFlagged,
-                /*ImageURLs = imageLinks,
-                VideoURLs = videoLinks,
-                Categories = categories*/
-            };
 
-            rawPost.RawVideoURLs = rawPost.RawImageURLs;
-            rawPost.Author = db.Users.Find(rawPost.AuthorRefId);
+
+
+            rawPost.Post.Author = db.Users.Find(rawPost.Post.AuthorRefId);
 
             if (ModelState.IsValid)
             {
 
-                db.Posts.Add(post);
+                db.Posts.Add(rawPost.Post);
+                db.Users.Find(rawPost.Post.AuthorRefId).PostsAuthored.Add(rawPost.Post);
                 db.SaveChanges();
 
-                var latestId = db.Posts.Where(x => x.Content == rawPost.Content && x.Title == rawPost.Title).Max(x => x.PostId);
-                Post savedPost = db.Posts.Find(latestId);
+                var latestId = db.Posts.Where(x => x.Content == rawPost.Post.Content && x.Title == rawPost.Post.Title).Max(x => x.PostId);
 
-                List<ImageLink> imageLinks = rawPost.RawImageURLs
-                    .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
-                    .ToList()
-                    .Select(str => new ImageLink { URL = str, PostRefId = savedPost.PostId })
-                    .ToList();
-                List<VideoLink> videoLinks = rawPost.RawImageURLs
-                       .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
-                        .ToList()
-                        .Select(str => new VideoLink { URL = str, PostRefId = savedPost.PostId })
-                        .ToList();
-
-
-                List<String> categoryNames = rawPost.RawCategories
-                    .Where(c => c.IsSelected)
-                    .Select(c => c.CategoryName)
-                    .ToList();
-
-                List<Category> categories = db.Categories.Where(c => categoryNames.Contains(c.Name))
-                    .AsEnumerable().ToList();
-
-                savedPost.ImageURLs = imageLinks;
-                savedPost.VideoURLs = videoLinks;
-                savedPost.Categories = categories;
-
-                foreach (Category c in categories)
-                {
-                    c.Posts.Add(savedPost);
-                }
-
-
-
-                db.ImageLinks.AddRange(imageLinks);
-                db.VideoLinks.AddRange(videoLinks);
+                rawPost.updatePost(latestId, db.Categories.ToList());
+                db.ImageLinks.AddRange(rawPost.Post.ImageURLs);
+                db.VideoLinks.AddRange(rawPost.Post.VideoURLs);
                 db.SaveChanges();
-
-
-
-
                 return RedirectToAction("Index");
             }
 
@@ -162,8 +122,12 @@ namespace FilipBlog.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.AuthorRefId = new SelectList(db.Users, "Id", "FirstName", post.AuthorRefId);
-            return View(post);
+            RawPost rawPost = new RawPost(post, db.Categories.ToList());
+
+
+
+
+            return View(rawPost);
         }
 
         // POST: Posts/Edit/5
@@ -171,16 +135,67 @@ namespace FilipBlog.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PostId,Title,Subtitle,Content,AuthorRefId,DateOfCreation,DateOfModification,IsFlagged")] Post post)
+        public ActionResult Edit([Bind(Include = "Post,RawImageURLs,RawCategories,RawVideoURLs")] RawPost rawPost)
         {
+
             if (ModelState.IsValid)
             {
+
+                Post post = db.Posts.Find(rawPost.Post.PostId);
+                List<VideoLink> updatedVideoLinks = new List<VideoLink>();
+                if (rawPost.RawVideoURLs!=null)
+                updatedVideoLinks = rawPost.RawVideoURLs
+                       .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+                       .ToList()
+                       .Select(str => new VideoLink { URL = str, PostRefId = rawPost.Post.PostId })
+                       .ToList();
+
+                List<VideoLink> oldVideos = db.VideoLinks.Where(x => x.PostRefId == rawPost.Post.PostId).ToList();
+                List<VideoLink> addedVideos = updatedVideoLinks.Except(oldVideos).ToList();
+                List<VideoLink> deletedVideos = oldVideos.Except(updatedVideoLinks).ToList();
+                addedVideos.ForEach(x => db.Entry(x).State = EntityState.Added);
+                deletedVideos.ForEach(x => db.Entry(x).State = EntityState.Deleted);
+
+
+                List<ImageLink> updatedImageLinks = new List<ImageLink>();
+                if(rawPost.RawImageURLs!=null)
+                    updatedImageLinks = rawPost.RawImageURLs
+                     .Split(new[] { Environment.NewLine }, StringSplitOptions.None)
+                     .ToList()
+                     .Select(str => new ImageLink { URL = str, PostRefId = rawPost.Post.PostId })
+                     .ToList();
+                List<ImageLink> oldImages = db.ImageLinks.Where(x => x.PostRefId == rawPost.Post.PostId).ToList();
+                List<ImageLink> addedImages = updatedImageLinks.Except(oldImages).ToList();
+                List<ImageLink> deletedImages = oldImages.Except(updatedImageLinks).ToList();
+                deletedImages.ForEach(x => db.Entry(x).State = EntityState.Deleted);
+                addedImages.ForEach(x => db.Entry(x).State = EntityState.Added);
+
+
+                List<String> selectedCategoriesNames = rawPost.RawCategories.Where(c => c.IsSelected).Select(c => c.CategoryName).ToList();
+                List<Category> selectedCategories = db.Categories.Where(cDB =>
+                selectedCategoriesNames.Contains(cDB.Name)).ToList();
+                var deletedCategories = post.Categories.Except(selectedCategories).ToList<Category>();
+                var addedCategories = selectedCategories.Except(post.Categories).ToList<Category>();
+                deletedCategories.ForEach(c => post.Categories.Remove(c));
+                foreach (Category c in addedCategories)
+                {
+                    if (db.Entry(c).State == EntityState.Detached)
+                        db.Categories.Attach(c);
+
+                    post.Categories.Add(c);
+                }
+
+                post.Title = rawPost.Post.Title;
+                post.Subtitle = rawPost.Post.Subtitle;
+                post.Content = rawPost.Post.Content;
+                post.DateOfModification = DateTime.Now;
+
                 db.Entry(post).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.AuthorRefId = new SelectList(db.Users, "Id", "FirstName", post.AuthorRefId);
-            return View(post);
+
+            return View(rawPost);
         }
 
         // GET: Posts/Delete/5
@@ -204,6 +219,14 @@ namespace FilipBlog.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
+            post.Likers.ToList().ForEach(x => x.PostsLiked.Remove(post));
+            post.Dislikers.ToList().ForEach(x => x.PostsDisliked.Remove(post));
+            post.Comments.Select(c => c.Commenter).ToList().ForEach(x => x.PostsCommentedOn.Remove(post));
+            post.Categories.ToList().ForEach(c => c.Posts.Remove(post));
+            post.Author.PostsAuthored.Remove(post);
+          /*  post.ImageURLs.ToList().ForEach(c => db.Entry(c).State = EntityState.Deleted);
+            post.VideoURLs.ToList().ForEach(c => db.Entry(c).State = EntityState.Deleted);
+            */
             db.Posts.Remove(post);
             db.SaveChanges();
             return RedirectToAction("Index");
@@ -217,13 +240,59 @@ namespace FilipBlog.Controllers
             }
             base.Dispose(disposing);
         }
+
+
+
+
+        public ActionResult LikePost(int postId)
+        {
+            Post post = db.Posts.Find(postId);
+            ApplicationUser liker = db.Users.Find(User.Identity.GetUserId());
+
+            if (post.Dislikers.Contains(liker))
+                post.Dislikers.Remove(liker);
+
+            if (liker.PostsDisliked.Contains(post))
+                liker.PostsDisliked.Remove(post);
+
+            if (!post.Likers.Contains(liker))
+                post.Likers.Add(liker);
+
+            if (!liker.PostsLiked.Contains(post))
+                liker.PostsLiked.Add(post);
+
+            db.SaveChanges();
+
+            return PartialView("_LikeDislikeCount", post);
+        }
+
+
+        public ActionResult DislikePost(int postId)
+        {
+            Post post = db.Posts.Find(postId);
+            ApplicationUser disliker = db.Users.Find(User.Identity.GetUserId());
+
+            if (post.Likers.Contains(disliker))
+                post.Likers.Remove(disliker);
+
+            if (disliker.PostsLiked.Contains(post))
+                disliker.PostsLiked.Remove(post);
+
+            if (!post.Dislikers.Contains(disliker))
+                post.Dislikers.Add(disliker);
+
+            if (!disliker.PostsDisliked.Contains(post))
+                disliker.PostsDisliked.Add(post);
+
+            db.SaveChanges();
+
+            return PartialView("_LikeDislikeCount", post);
+        }
+
+        public ActionResult ShowComments(int postId)
+        {
+            List<Comment> comms = db.Posts.Find(postId).Comments.ToList();
+            return PartialView("_CommentList", comms);
+        }
     }
-
-   
-
-
-
-
-
-
 }

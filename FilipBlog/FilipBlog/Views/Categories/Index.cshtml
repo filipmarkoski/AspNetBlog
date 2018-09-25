@@ -1,45 +1,61 @@
 ﻿@model IEnumerable<FilipBlog.Models.Category>
 
 @{
-    ViewBag.Title = "Index";
+	ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+	@Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfCreation)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfModification)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfCreation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfModification)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CategoryID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CategoryID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CategoryID })
-        </td>
-    </tr>
-}
-
+<table class="table" id="my-table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Name)
+			</th>
+			<th>
+				Date Created
+			</th>
+			<th>
+				Date Modified
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfCreation)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.DateOfModification)
+				</td>
+				<td>
+					@Html.ActionLink("Details", "Details", new { id = item.CategoryID }, new { @class = "btn btn-xs btn-primary" })
+					@if (User.IsInRole("Admin") ||  User.IsInRole("Moderator"))
+					{
+					@Html.ActionLink("Edit", "Edit", new { id = item.CategoryID }, new { @class = "btn btn-xs btn-default" }) <span> </span>
+					@Html.ActionLink("Delete", "Delete", new { id = item.CategoryID }, new { @class = "btn btn-xs btn-danger" })
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
+
+
+@section scripts
+{
+	<script>
+		$(document).ready(function () {
+			$("#my-table").DataTable();
+		})
+	</script>
+}

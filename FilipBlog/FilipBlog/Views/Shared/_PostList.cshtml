@@ -1,0 +1,7 @@
+﻿@using FilipBlog.Models
+@model List<FilipBlog.Models.Post>
+
+@foreach (Post post in Model)
+{
+    @Html.Partial("~/Views/Shared/_Basic.cshtml", post);
+}

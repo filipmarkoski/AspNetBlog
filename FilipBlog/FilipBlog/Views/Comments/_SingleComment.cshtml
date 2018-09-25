@@ -1,0 +1,40 @@
+﻿@model FilipBlog.Models.Comment
+
+
+
+<tr>
+    <td>
+        @Html.DisplayFor(model => model.Commenter.FirstName)
+    </td>
+
+
+
+
+
+
+    <td>
+
+        <p style="font-size:15px" class="currentContent @Model.CommentId">@Model.Content</p>
+        <input type="text" hidden="hidden" class="editField @Model.CommentId" value=@Model.Content>
+    </td>
+
+
+
+    <td>
+        @Html.DisplayFor(model => model.DateOfCreation)
+    </td>
+
+
+
+    <td>
+        @Html.DisplayFor(model => model.DateOfModification)
+    </td>
+
+
+    <td>
+        <button data-comment-id=@Model.CommentId class="btn-link js-edit @Model.CommentId">Edit</button>
+        <button data-comment-id=@Model.CommentId class="btn-link js-cancel @Model.CommentId" hidden="hidden">Cancel</button>
+        <button data-comment-id=@Model.CommentId class="btn-link js-save @Model.CommentId" hidden="hidden">Save</button>
+        <button data-comment-id=@Model.CommentId class="btn-link js-delete @Model.CommentId">Delete</button>
+    </td>
+</tr>

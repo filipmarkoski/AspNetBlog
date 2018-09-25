@@ -50,6 +50,7 @@ namespace FilipBlog.Controllers
             return View(model);
         }
 
+
         // POST: Reports/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -60,6 +61,10 @@ namespace FilipBlog.Controllers
             if (ModelState.IsValid)
             {
                 db.Reports.Add(report);
+				var postReported = db.Posts.Find(report.Post_PostId);
+				var userId = User.Identity.GetUserId();
+				db.Users.Find(userId)
+					.PostsReported.Add(postReported);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -137,5 +142,10 @@ namespace FilipBlog.Controllers
             }
             base.Dispose(disposing);
         }
+
+		public ActionResult ViewReports (int postId)
+		{
+			return View("_ViewReports", db.Reports.ToList().Where(x => x.Post_PostId == postId));
+		}
     }
 }
